@@ -1,0 +1,196 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="10/30/2026 3:17:58 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="LAPTOP-53M520PJ"
+  DTS:CreatorName="LAPTOP-53M520PJ\stefa"
+  DTS:DTSID="{6352DF5F-9122-46CD-AAF3-8AF930A57612}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="17.0.1016.0"
+  DTS:LocaleID="8192"
+  DTS:ObjectName="DimDate"
+  DTS:PackageType="5"
+  DTS:VersionBuild="8"
+  DTS:VersionGUID="{8A781BF7-22C2-4419-9C7A-11C69E9B6F4B}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[LocalHost.DemoSSIS2]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{048D73F0-C240-413F-A895-BB7159CB0F67}"
+      DTS:ObjectName="LocalHost.DemoSSIS2">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=.;Initial Catalog=DemoSSIS2;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-DimDate-{048D73F0-C240-413F-A895-BB7159CB0F67}LocalHost.DemoSSIS2;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="3"
+      DTS:DTSID="{D1B87297-0006-4D4A-B355-732494FC3F31}"
+      DTS:ObjectName="YearsAhead">
+      <DTS:Property
+        DTS:DataType="3"
+        DTS:Name="ParameterValue">10</DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{4BC0AA05-FFED-4B2E-90E5-1405E84BAFF3}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="(DT_WSTR, 4)(YEAR(GETDATE()) + @[$Package::YearsAhead]) + &quot;-12-31&quot;"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="EndDate">
+      <DTS:VariableValue
+        DTS:DataType="8">2036-12-31</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{486C31D2-D0BE-482F-86DD-9C53D708CC3E}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="DATEPART(&quot;dw&quot;, GETDATE()) == 1"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="IsSunday">
+      <DTS:VariableValue
+        DTS:DataType="11">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{4009EF65-B294-4A73-B7FB-8BE42DFB18B0}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="StartDate">
+      <DTS:VariableValue
+        DTS:DataType="8">2020-01-01</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Execute SQL Task"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{5FE52AA0-8948-4D47-8B73-BAC644E53893}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Execute SQL Task"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{048D73F0-C240-413F-A895-BB7159CB0F67}"
+          SQLTask:SqlStatementSource="SET DATEFIRST 1;&#xA;&#xA;DECLARE @StartDate DATE = CAST(? AS DATE);&#xA;DECLARE @EndDate   DATE = CAST(? AS DATE);&#xA;&#xA;WITH DatesCTE AS (&#xA;    SELECT @StartDate AS CurrentDate&#xA;    UNION ALL&#xA;    SELECT DATEADD(DAY, 1, CurrentDate)&#xA;    FROM DatesCTE&#xA;    WHERE CurrentDate &lt; @EndDate&#xA;),&#xA;SourceData AS (&#xA;    SELECT &#xA;        CONVERT(INT, CONVERT(VARCHAR(8), CurrentDate, 112)) AS DateKey,&#xA;        CurrentDate AS FullDate,&#xA;        DATEPART(DAY, CurrentDate) AS DayNumber,&#xA;        -- Svenskt veckodagsnamn med stor begynnelsebokstav:&#xA;        UPPER(LEFT(FORMAT(CurrentDate, 'dddd', 'sv-SE'), 1)) + SUBSTRING(FORMAT(CurrentDate, 'dddd', 'sv-SE'), 2, 20) AS DayName,&#xA;        DATEPART(WEEKDAY, CurrentDate) AS DayOfWeek, -- 1 = Måndag, 7 = Söndag&#xA;        DATEPART(DAYOFYEAR, CurrentDate) AS DayOfYear,&#xA;        DATEPART(ISO_WEEK, CurrentDate) AS WeekOfYear,&#xA;        MONTH(CurrentDate) AS MonthNumber,&#xA;        UPPER(LEFT(FORMAT(CurrentDate, 'MMMM', 'sv-SE'), 1)) + SUBSTRING(FORMAT(CurrentDate, 'MMMM', 'sv-SE'), 2, 20) AS MonthName,&#xA;        DATEPART(QUARTER, CurrentDate) AS QuarterNumber,&#xA;        'Q' + CAST(DATEPART(QUARTER, CurrentDate) AS VARCHAR(1)) AS QuarterName,&#xA;        YEAR(CurrentDate) AS YearNumber,&#xA;        -- Lördag (6) och Söndag (7) räknas som helg:&#xA;        CASE WHEN DATEPART(WEEKDAY, CurrentDate) IN (6, 7) THEN 1 ELSE 0 END AS IsWeekend&#xA;    FROM DatesCTE&#xA;)&#xA;MERGE INTO dbo.DimDate AS Target&#xA;USING SourceData AS Source&#xA;ON Target.DateKey = Source.DateKey&#xA;&#xA;WHEN MATCHED THEN&#xA;    UPDATE SET &#xA;        Target.FullDate      = Source.FullDate,&#xA;        Target.DayNumber     = Source.DayNumber,&#xA;        Target.DayName       = Source.DayName,&#xA;        Target.DayOfWeek     = Source.DayOfWeek,&#xA;        Target.DayOfYear     = Source.DayOfYear,&#xA;        Target.WeekOfYear    = Source.WeekOfYear,&#xA;        Target.MonthNumber   = Source.MonthNumber,&#xA;        Target.MonthName     = Source.MonthName,&#xA;        Target.QuarterNumber = Source.QuarterNumber,&#xA;        Target.QuarterName   = Source.QuarterName,&#xA;        Target.YearNumber    = Source.YearNumber,&#xA;        Target.IsWeekend     = Source.IsWeekend&#xA;&#xA;WHEN NOT MATCHED THEN&#xA;    INSERT (&#xA;        DateKey, FullDate, DayNumber, DayName, DayOfWeek, &#xA;        DayOfYear, WeekOfYear, MonthNumber, MonthName, &#xA;        QuarterNumber, QuarterName, YearNumber, IsWeekend&#xA;    )&#xA;    VALUES (&#xA;        Source.DateKey, Source.FullDate, Source.DayNumber, Source.DayName, Source.DayOfWeek, &#xA;        Source.DayOfYear, Source.WeekOfYear, Source.MonthNumber, Source.MonthName, &#xA;        Source.QuarterNumber, Source.QuarterName, Source.YearNumber, Source.IsWeekend&#xA;    )&#xA;&#xA;OPTION (MAXRECURSION 0);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::StartDate"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="User::EndDate"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Expression Task"
+      DTS:CreationName="Microsoft.ExpressionTask"
+      DTS:Description="Expression Task"
+      DTS:DTSID="{5B772F0E-092C-4C7C-99EA-60EDE7781B5C}"
+      DTS:ExecutableType="Microsoft.ExpressionTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Expression Task"
+      DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <ExpressionTask
+          Expression="@[User::IsSunday]" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{B7ED731F-D0A8-475C-95B2-009B337FCB70}"
+      DTS:EvalOp="1"
+      DTS:Expression="@[User::IsSunday]"
+      DTS:From="Package\Expression Task"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Execute SQL Task" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="164,42.6666666666667"
+          Id="Package\Execute SQL Task"
+          TopLeft="173.74999223277,137.149993460179" />
+        <NodeLayout
+          Size="154.666666666667,42.6666666666667"
+          Id="Package\Expression Task"
+          TopLeft="187.499991618097,20.7999990081787" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="264.83332495143,63.4666656748454">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-9.08333271866059,73.6833277853332"
+              Start="0,0"
+              End="-9.08333271866059,66.1833277853332">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,32.8416638926666" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,32.8416638926666"
+                    Point2="0,36.8416638926666"
+                    Point3="-4,36.8416638926666" />
+                  <mssgle:LineSegment
+                    End="-5.08333271866059,36.8416638926666" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-5.08333271866059,36.8416638926666"
+                    Point2="-9.08333271866059,36.8416638926666"
+                    Point3="-9.08333271866059,40.8416638926666" />
+                  <mssgle:LineSegment
+                    End="-9.08333271866059,66.1833277853332" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-12.5416663593303,41.8416638926666,16,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
