@@ -1,9 +1,14 @@
 <Solution>
   <Configurations>
+    <BuildType Name="Debug" />
     <BuildType Name="Development" />
-    <Platform Name="Default" />
+    <BuildType Name="Release" />
   </Configurations>
   <Project Path="Demo1023/Demo1023.dtproj" Type="c9674dcb-5085-4a16-b785-4c70dd1589bd">
+    <BuildType Project="Development" />
     <Platform Project="?" />
+  </Project>
+  <Project Path="FetchFromAPI/FetchFromAPI.csproj" Id="895a0038-e3dd-4e67-b777-54322c70100b">
+    <BuildType Solution="Development|*" Project="Release" />
   </Project>
 </Solution>
