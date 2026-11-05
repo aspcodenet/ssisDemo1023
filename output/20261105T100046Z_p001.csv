@@ -1,0 +1,2 @@
+id,database,resource,createdAt,updatedAt,amount,customerCode,id,orderDate
+d65a48ce-2480-4be9-b539-a06828fb65dd,Orders,orders,2026-11-04T17:42:30.699422Z,2026-11-04T17:42:30.699422Z,7963.52,CUST102,d65a48ce-2480-4be9-b539-a06828fb65dd,2026-10-01T21:01:26Z

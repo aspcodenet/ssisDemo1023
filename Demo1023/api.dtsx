@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
   DTS:CreationDate="11/4/2026 1:05:28 PM"
@@ -11,9 +11,339 @@
   DTS:LocaleID="8192"
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
-  DTS:VersionGUID="{3187D632-B556-45E9-BF64-5627CBA0A992}">
+  DTS:VersionBuild="21"
+  DTS:VersionGUID="{B51E3E2F-EA5F-462F-BFBA-DCD10194B80C}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
-  <DTS:Variables />
-  <DTS:Executables />
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[LocalHost.DemoSSIS2]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{7087002A-F7C6-4356-B273-4DC139A900B5}"
+      DTS:ObjectName="LocalHost.DemoSSIS2">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=.;Initial Catalog=DemoSSIS2;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-Package1-{7087002A-F7C6-4356-B273-4DC139A900B5}LocalHost.DemoSSIS2;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{B23CD87D-3785-42CC-B943-F09CB2A657D6}"
+      DTS:ObjectName="apitoken">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">jsonsrv_284d251d8c9f15122d4450cd97927986697317f7421518fcf76f0ce0ffeabb3e</DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{5165A892-98FC-47C3-962C-E04EE86E9C12}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="ErrorData">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{DC6C76D4-0983-4A9F-9BDE-9573BCA1B19D}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="LastModifiedSince">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{25D4A7E8-EE0D-4DD9-818D-7751B6F28AFF}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="LoadingLogId">
+      <DTS:VariableValue
+        DTS:DataType="3">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{220A8B25-4DC5-478C-B722-F89A6F9B1A71}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="NextModifiedSince">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{EEBFB246-2707-4474-A90F-3900413DBE4A}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="ResultData">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Execute Process Task"
+      DTS:CreationName="Microsoft.ExecuteProcess"
+      DTS:Description="Execute Process Task"
+      DTS:DTSID="{6603455E-F233-4637-A9E0-05D997E4967E}"
+      DTS:ExecutableType="Microsoft.ExecuteProcess"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Execute Process Task"
+      DTS:TaskContact="Execute Process Task;Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:PropertyExpression
+        DTS:Name="Arguments">"main.py " + " --modified-since " +  @[User::LastModifiedSince] + " --token " +  @[$Package::apitoken]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <ExecuteProcessData
+          Executable="C:\Users\stefa\AppData\Local\Programs\Python\Python312\python.exe"
+          Arguments="main.py  --modified-since  --token jsonsrv_284d251d8c9f15122d4450cd97927986697317f7421518fcf76f0ce0ffeabb3e"
+          WorkingDirectory="C:\Users\stefa\source\repos\Demo1023"
+          StandardOutputVariable="User::ResultData"
+          StandardErrorVariable="User::ErrorData" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Execute SQL Task"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{21D6BA04-F9CD-4F45-BE78-DD7BAEEE2DB3}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Execute SQL Task"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{7087002A-F7C6-4356-B273-4DC139A900B5}"
+          SQLTask:SqlStatementSource="DECLARE @ProcessName NVARCHAR(50) = N'OrdersApi'; &#xA;DECLARE @PreviousLastModified NVARCHAR(100);&#xA;&#xA;-- 1. Hämta det senaste värdet från den tidigare slutförda körningen&#xA;SELECT TOP (1) &#xA;    @PreviousLastModified = [last_modified_since]&#xA;FROM [dbo].[LoadingLog]&#xA;WHERE [name] = @ProcessName&#xA;and last_modified_since &lt;&gt; ''&#xA;ORDER BY [id] DESC;&#xA;&#xA;-- 2. Infoga den nya loggraden med starttid&#xA;INSERT INTO [dbo].[LoadingLog] (&#xA;    [name],&#xA;    [started],&#xA;    [status], [last_modified_since]&#xA;)&#xA;VALUES (&#xA;    @ProcessName,&#xA;    GETUTCDATE(),&#xA;    'IN_PROGRESS', ''&#xA;);&#xA;&#xA;-- 3. Returnera det senaste värdet (eller skicka tillbaka som resultset)&#xA;SELECT ISNULL(@PreviousLastModified, '1900-01-01T00:00:00Z') AS [LastModifiedSince],&#xA;SCOPE_IDENTITY() as Id;"
+          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="0"
+            SQLTask:DtsVariableName="User::LastModifiedSince" />
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="1"
+            SQLTask:DtsVariableName="User::LoadingLogId" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Execute SQL Task 1"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{D5C1CAE7-52BC-40C9-A859-0333E49543EA}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Execute SQL Task 1"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{7087002A-F7C6-4356-B273-4DC139A900B5}"
+          SQLTask:SqlStatementSource="update [dbo].[LoadingLog]&#xA;set ended=GETUTCDATE(),&#xA;status='DONE',&#xA;last_modified_since=?&#xA;WHERE id=?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::NextModifiedSince"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="User::LoadingLogId"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Expression Task"
+      DTS:CreationName="Microsoft.ExpressionTask"
+      DTS:Description="Expression Task"
+      DTS:DTSID="{1669ACC2-1092-44EE-958D-E86E6327C73E}"
+      DTS:ExecutableType="Microsoft.ExpressionTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Expression Task"
+      DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <ExpressionTask
+          Expression="@[User::NextModifiedSince] = SUBSTRING(@[User::ResultData], FINDSTRING(@[User::ResultData], &quot;NEXT_MODIFIED_SINCE=&quot;, 1) + 20, 19)" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{2133CE89-68C2-4D96-BE0B-460C819C18EA}"
+      DTS:From="Package\Execute SQL Task"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Execute Process Task" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{5A7B2FCA-FDB1-4CF0-9D1A-24FDA8A932F1}"
+      DTS:From="Package\Expression Task"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\Execute SQL Task 1" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{611486D4-B4F3-4EC0-A1BD-C6AB90BFF92C}"
+      DTS:From="Package\Execute Process Task"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\Expression Task" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="181.333333333334,42.6666666666667"
+          Id="Package\Execute Process Task"
+          TopLeft="298.749986644835,168.999991941452" />
+        <NodeLayout
+          Size="164,42.6666666666667"
+          Id="Package\Execute SQL Task"
+          TopLeft="318.124985778705,97.4999953508379" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="400.124985778705,140.166662017505">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-10.7083324672033,28.8333299239474"
+              Start="0,0"
+              End="-10.7083324672033,21.3333299239474">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,10.4166649619737" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,10.4166649619737"
+                    Point2="0,14.4166649619737"
+                    Point3="-4,14.4166649619737" />
+                  <mssgle:LineSegment
+                    End="-6.70833246720332,14.4166649619737" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-6.70833246720332,14.4166649619737"
+                    Point2="-10.7083324672033,14.4166649619737"
+                    Point3="-10.7083324672033,18.4166649619737" />
+                  <mssgle:LineSegment
+                    End="-10.7083324672033,21.3333299239474" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="173.333333333334,42.6666666666667"
+          Id="Package\Execute SQL Task 1"
+          TopLeft="608.749972786755,202.299994359017" />
+        <NodeLayout
+          Size="154.666666666667,42.6666666666667"
+          Id="Package\Expression Task"
+          TopLeft="106.249995250255,220.033328436216" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="298.749986644835,190.333325274785">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-37.8333247279134,51.0333364947639"
+              Start="0,0"
+              End="-30.3333247279134,51.0333364947639">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-14.9166623639567,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-14.9166623639567,0"
+                    Point2="-18.9166623639567,0"
+                    Point3="-18.9166623639567,4" />
+                  <mssgle:LineSegment
+                    End="-18.9166623639567,47.0333364947639" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.9166623639567,47.0333364947639"
+                    Point2="-18.9166623639567,51.0333364947639"
+                    Point3="-22.9166623639567,51.0333364947639" />
+                  <mssgle:LineSegment
+                    End="-30.3333247279134,51.0333364947639" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="260.916661916922,247.144439547327">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="347.833310869833,-23.511111854977"
+              Start="0,0"
+              End="340.333310869833,-23.511111854977">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="142.676697354749,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="142.676697354749,0"
+                    Point2="146.676697354749,0"
+                    Point3="146.676697354749,-4" />
+                  <mssgle:LineSegment
+                    End="146.676697354749,-19.511111854977" />
+                  <mssgle:CubicBezierSegment
+                    Point1="146.676697354749,-19.511111854977"
+                    Point2="146.676697354749,-23.511111854977"
+                    Point3="150.676697354749,-23.511111854977" />
+                  <mssgle:LineSegment
+                    End="340.333310869833,-23.511111854977" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
 </DTS:Executable>
